@@ -36,7 +36,7 @@ namespace Quinta_de_Viana
         private void Form1_Load(object sender, EventArgs e)
         {
             listar();
-            if (!File.Exists(nomebanco))
+            if (!File.Exists(nomebanco))   
             {
                 SQLiteConnection.CreateFile(nomebanco);
                 SQLiteConnection conn = new SQLiteConnection(conexao);
