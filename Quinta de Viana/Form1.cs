@@ -110,6 +110,12 @@ namespace Quinta_de_Viana
             }
             dataGridView1.DataSource = lista;
             dataGridView2.DataSource = lista;
+
+            dataGridView1.Columns[1].Width = 300;
+            dataGridView1.Columns[3].Width = 800;
+            dataGridView2.Columns[1].Width = 150;
+            dataGridView3.Columns[1].Width = 200;
+
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -131,29 +137,32 @@ namespace Quinta_de_Viana
         private void dataGridView2_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
 
-            if (dataGridView3.Rows.Count==0)
+            Produto p = new Produto
             {
-                List<Produto> p = new List<Produto>();
-                p.Add(new Produto
-                {
-                    Código = Convert.ToInt32(dataGridView2.CurrentRow.Cells[0].Value),
-                    Nome = dataGridView2.CurrentRow.Cells[1].Value.ToString(),
-                    Descrição = dataGridView2.CurrentRow.Cells[3].Value.ToString(),
-                    Preço = Convert.ToDouble(dataGridView2.CurrentRow.Cells[2].Value)
-                });
+                Código = Convert.ToInt32(dataGridView2.CurrentRow.Cells[0].Value),
+                Nome = dataGridView2.CurrentRow.Cells[1].Value.ToString(),
+                Descrição = dataGridView2.CurrentRow.Cells[3].Value.ToString(),
+                Preço = Convert.ToDouble(dataGridView2.CurrentRow.Cells[2].Value)
+            };
 
-                dataGridView3.DataSource = p;
+            dataGridView3.Rows.Add(p.Código, p.Nome, p.Preço);
+
+            atualizaTotal();
+
+        }
+
+        private void atualizaTotal()
+        {
+
+            double sum = 0;
+
+            for (int i = 0; i < dataGridView3.RowCount; i++)
+            {
+                sum = sum + Convert.ToDouble(dataGridView3.Rows[i].Cells[2].Value);
             }
-            else {
-                Produto p = new Produto
-                {
-                    Código = Convert.ToInt32(dataGridView2.CurrentRow.Cells[0].Value),
-                    Nome = dataGridView2.CurrentRow.Cells[1].Value.ToString(),
-                    Descrição = dataGridView2.CurrentRow.Cells[3].Value.ToString(),
-                    Preço = Convert.ToDouble(dataGridView2.CurrentRow.Cells[2].Value)
-                };
-                dataGridView3.Rows.Add(p);
-            }
+            //MessageBox.Show(sum.ToString());
+            string yourValue = (((double)sum / 100)*100).ToString("C");
+            labelTotal.Text = "Total: " + yourValue;
         }
 
         private void dataGridView1_DoubleClick(object sender, EventArgs e)
@@ -210,6 +219,18 @@ namespace Quinta_de_Viana
                 codTextBox.Text = string.Empty;
                 listar();
             }
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            dataGridView3.DataSource = null;
+            dataGridView3.Rows.Clear();
+            atualizaTotal();
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            
         }
     }
 }
