@@ -59,6 +59,7 @@ namespace Quinta_de_Viana
 
         private void button1_Click(object sender, EventArgs e)
         {
+            
             if (nomeTextBox.Text == "" || precoTextBox.Text == ""
                 || codTextBox.Text == "")
             {
