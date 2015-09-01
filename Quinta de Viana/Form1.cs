@@ -59,6 +59,13 @@ namespace Quinta_de_Viana
 
         private void button1_Click(object sender, EventArgs e)
         {
+            if (nomeTextBox.Text == "" || precoTextBox.Text == ""
+                || codTextBox.Text == "")
+            {
+                MessageBox.Show("Preencha todos os campos");
+                return;
+            }
+
             SQLiteConnection conn = new SQLiteConnection(conexao);
             if (conn.State == ConnectionState.Closed)
                 conn.Open();
@@ -96,10 +103,10 @@ namespace Quinta_de_Viana
             List<Produto> lista = new List<Produto>();
             while (dr.Read())
             {
-                lista.Add(new Produto{ codigo = Convert.ToInt32(dr["CODIGO"]),
-                              nome = dr["NOME"].ToString()
-                            , descricao = dr["DESCRICAO"].ToString()
-                            , preco = Convert.ToDouble(dr["PRECO"])  });
+                lista.Add(new Produto{ Código = Convert.ToInt32(dr["CODIGO"]),
+                              Nome = dr["NOME"].ToString()
+                            , Descrição = dr["DESCRICAO"].ToString()
+                            , Preço = Convert.ToDouble(dr["PRECO"])  });
             }
             dataGridView1.DataSource = lista;
             dataGridView2.DataSource = lista;
@@ -129,10 +136,10 @@ namespace Quinta_de_Viana
                 List<Produto> p = new List<Produto>();
                 p.Add(new Produto
                 {
-                    codigo = Convert.ToInt32(dataGridView2.CurrentRow.Cells[0].Value),
-                    nome = dataGridView2.CurrentRow.Cells[1].Value.ToString(),
-                    descricao = dataGridView2.CurrentRow.Cells[3].Value.ToString(),
-                    preco = Convert.ToDouble(dataGridView2.CurrentRow.Cells[2].Value)
+                    Código = Convert.ToInt32(dataGridView2.CurrentRow.Cells[0].Value),
+                    Nome = dataGridView2.CurrentRow.Cells[1].Value.ToString(),
+                    Descrição = dataGridView2.CurrentRow.Cells[3].Value.ToString(),
+                    Preço = Convert.ToDouble(dataGridView2.CurrentRow.Cells[2].Value)
                 });
 
                 dataGridView3.DataSource = p;
@@ -140,10 +147,10 @@ namespace Quinta_de_Viana
             else {
                 Produto p = new Produto
                 {
-                    codigo = Convert.ToInt32(dataGridView2.CurrentRow.Cells[0].Value),
-                    nome = dataGridView2.CurrentRow.Cells[1].Value.ToString(),
-                    descricao = dataGridView2.CurrentRow.Cells[3].Value.ToString(),
-                    preco = Convert.ToDouble(dataGridView2.CurrentRow.Cells[2].Value)
+                    Código = Convert.ToInt32(dataGridView2.CurrentRow.Cells[0].Value),
+                    Nome = dataGridView2.CurrentRow.Cells[1].Value.ToString(),
+                    Descrição = dataGridView2.CurrentRow.Cells[3].Value.ToString(),
+                    Preço = Convert.ToDouble(dataGridView2.CurrentRow.Cells[2].Value)
                 };
                 dataGridView3.Rows.Add(p);
             }
@@ -171,6 +178,13 @@ namespace Quinta_de_Viana
 
         private void button3_Click(object sender, EventArgs e)
         {
+            if (nomeTextBox.Text == "" || precoTextBox.Text == ""
+                || codTextBox.Text == "")
+            {
+                MessageBox.Show("Preencha todos os campos");
+                return;
+            }
+
             if (IDregistro > 0)
             {
                 SQLiteConnection conn = new SQLiteConnection(conexao);

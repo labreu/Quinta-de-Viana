@@ -8,9 +8,9 @@ namespace Quinta_de_Viana
 {
     class Produto
     {
-        public int codigo { get; set; }
-        public string nome { get; set; }
-        public double preco { get; set; }
-        public string descricao { get; set; }
+        public int Código { get; set; }
+        public string Nome { get; set; }
+        public double Preço { get; set; }
+        public string Descrição { get; set; }
     }
 }

@@ -91,7 +91,7 @@
             this.Menu.Padding = new System.Windows.Forms.Padding(3);
             this.Menu.Size = new System.Drawing.Size(1550, 800);
             this.Menu.TabIndex = 0;
-            this.Menu.Text = "Menu";
+            this.Menu.Text = "tab1";
             // 
             // tabPage2
             // 
