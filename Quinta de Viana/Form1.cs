@@ -17,7 +17,7 @@ namespace Quinta_de_Viana
         private static string conexao = "Data Source=Banco.db";
         private static string nomebanco = "Banco.db";
         private static int IDregistro;
-        private int id = 0;
+        private int id = 1;
 
         public Form1()
         {
@@ -51,7 +51,7 @@ namespace Quinta_de_Viana
                 try
                 {
                     cmd.ExecuteNonQuery();
-                    listar();
+               
                 }
                 catch (Exception ex)
                 {
@@ -66,7 +66,7 @@ namespace Quinta_de_Viana
                 try
                 {
                     cmd2.ExecuteNonQuery();
-                    listar();
+            
                 }
                 catch (Exception ex)
                 {
@@ -88,11 +88,7 @@ namespace Quinta_de_Viana
                     return;
                 }
             }
-            string path = "C:\\Users\\Quinta de Viana\\OneDrive\\Documentos\\";
-            File.Delete(path + "Banco.db");
-            File.Copy("Banco.db", path + "Banco.db");
-
-            listar();
+            
             System.Windows.Forms.ToolTip ToolTip1 = new System.Windows.Forms.ToolTip();
             ToolTip1.SetToolTip(this.button2, "Deleta a linha selecionada abaixo.");
 
@@ -113,7 +109,10 @@ namespace Quinta_de_Viana
 
             System.Windows.Forms.ToolTip ToolTip7 = new System.Windows.Forms.ToolTip();
             ToolTip7.SetToolTip(this.button1, "Imprime a conta e registra dados para balanço.");
-
+            string path = "C:\\Users\\Quinta de Viana\\OneDrive\\Documentos\\";
+            File.Delete(path + "Banco.db");
+            File.Copy("Banco.db", path + "Banco.db");
+            listar();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -142,7 +141,7 @@ namespace Quinta_de_Viana
             catch (Exception ex)
             {
                 
-                MessageBox.Show("Erro ao cadastrar: Verifique se o código já existe\n");
+                MessageBox.Show("Erro ao cadastrar: Verifique se o código já existe\n"+ex.Message);
                 return;
             }
             DateTime saveNow = DateTime.Now;
@@ -347,15 +346,15 @@ namespace Quinta_de_Viana
                     try
                     {
                         id = dr.GetInt32(0) + 1;
-                        dr.Close();
-                        conn.Close();
                         //MessageBox.Show(id + "");  //proxima conta
                     }
                     catch (Exception ex)
                     {
-                        id = 0;
+                        id = 1;
                         //MessageBox.Show(ex.Message + "\n ID = "+id);
                     }
+                    dr.Close();
+                    conn.Close();
                 }
                 label3.Text = "Conta: " + id;
             }
