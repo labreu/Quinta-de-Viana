@@ -17,6 +17,7 @@ namespace Quinta_de_Viana
         private static string conexao = "Data Source=Banco.db";
         private static string nomebanco = "Banco.db";
         private static int IDregistro;
+        private int id = 0;
 
         public Form1()
         {
@@ -35,7 +36,8 @@ namespace Quinta_de_Viana
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            listar();
+            
+
             if (!File.Exists(nomebanco))   
             {
                 SQLiteConnection.CreateFile(nomebanco);
@@ -49,12 +51,69 @@ namespace Quinta_de_Viana
                 try
                 {
                     cmd.ExecuteNonQuery();
+                    listar();
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show("Erro ao criar banco: " + ex.Message);
+                    return;
+                }
+
+                StringBuilder sql2 = new StringBuilder();
+                sql2.AppendLine("CREATE TABLE IF NOT EXISTS HISTORICO_PRODUTOS ([ID] INTEGER PRIMARY KEY AUTOINCREMENT, [CODIGO] INTEGER ,[NOME] VARCHAR(50),[PRECO] REAL,[DESCRICAO] VARCHAR(255),[DATA] VARCHAR(50))");
+
+                SQLiteCommand cmd2 = new SQLiteCommand(sql2.ToString(), conn);
+                try
+                {
+                    cmd2.ExecuteNonQuery();
+                    listar();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Erro ao criar banco: " + ex.Message);
+                    return;
+                }
+
+                StringBuilder sql3 = new StringBuilder();
+                sql3.AppendLine("CREATE TABLE IF NOT EXISTS CONTAS ([ID] INTEGER PRIMARY KEY AUTOINCREMENT, [CODIGO_CONTA] INTEGER, [CODIGO] INTEGER, [NOME] VARCHAR(50),[PRECO] REAL,[DATA] VARCHAR(50))");
+
+                SQLiteCommand cmd3 = new SQLiteCommand(sql3.ToString(), conn);
+                try
+                {
+                    cmd3.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Erro ao criar banco: " + ex.Message);
+                    return;
                 }
             }
+            string path = "C:\\Users\\Quinta de Viana\\OneDrive\\Documentos\\";
+            File.Delete(path + "Banco.db");
+            File.Copy("Banco.db", path + "Banco.db");
+
+            listar();
+            System.Windows.Forms.ToolTip ToolTip1 = new System.Windows.Forms.ToolTip();
+            ToolTip1.SetToolTip(this.button2, "Deleta a linha selecionada abaixo.");
+
+            System.Windows.Forms.ToolTip ToolTip2 = new System.Windows.Forms.ToolTip();
+            ToolTip2.SetToolTip(this.button3, "Não é possível alterar um código. Utilize o Cadastro.");
+
+            System.Windows.Forms.ToolTip ToolTip3 = new System.Windows.Forms.ToolTip();
+            ToolTip3.SetToolTip(this.button6, "Limpa os campos acima.");
+
+            System.Windows.Forms.ToolTip ToolTip4 = new System.Windows.Forms.ToolTip();
+            ToolTip4.SetToolTip(this.button5, "Limpa a conta ao lado.");
+
+            System.Windows.Forms.ToolTip ToolTip5 = new System.Windows.Forms.ToolTip();
+            ToolTip5.SetToolTip(this.cadastrarButton, "Não é possível cadastrar dois produtos com mesmo código.");
+
+            System.Windows.Forms.ToolTip ToolTip6 = new System.Windows.Forms.ToolTip();
+            ToolTip6.SetToolTip(this.button4, "Anular uma conta que foi impressa errada para não alterar o balanço final.\nO número da conta está na nota.");
+
+            System.Windows.Forms.ToolTip ToolTip7 = new System.Windows.Forms.ToolTip();
+            ToolTip7.SetToolTip(this.button1, "Imprime a conta e registra dados para balanço.");
+
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -79,6 +138,25 @@ namespace Quinta_de_Viana
             try
             {
                 cmd.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                
+                MessageBox.Show("Erro ao cadastrar: Verifique se o código já existe\n");
+                return;
+            }
+            DateTime saveNow = DateTime.Now;
+
+            SQLiteCommand cmd2 = new SQLiteCommand("INSERT INTO HISTORICO_PRODUTOS(CODIGO, NOME, PRECO, DESCRICAO, DATA) VALUES (@CODIGO, @NOME, @PRECO, @DESCRICAO, @DATA)", conn);
+            cmd2.Parameters.AddWithValue("@CODIGO", Convert.ToInt32(codTextBox.Text.Trim()));
+            cmd2.Parameters.AddWithValue("@NOME", nomeTextBox.Text.Trim());
+            cmd2.Parameters.AddWithValue("@PRECO", Convert.ToDouble(precoTextBox.Text.Trim()));
+            cmd2.Parameters.AddWithValue("@DESCRICAO", "*Cadastro*"+descricaoTextBox.Text.Trim());
+            cmd2.Parameters.AddWithValue("@DATA", saveNow);
+
+            try
+            {
+                cmd2.ExecuteNonQuery();
                 MessageBox.Show("Registro salvo");
                 nomeTextBox.Text = string.Empty;
                 precoTextBox.Text = string.Empty;
@@ -95,7 +173,7 @@ namespace Quinta_de_Viana
 
         private void listar()
         {
-
+            func();
             SQLiteConnection conn = new SQLiteConnection(conexao);
             if (conn.State == ConnectionState.Closed)
                 conn.Open();
@@ -126,6 +204,7 @@ namespace Quinta_de_Viana
                 conn.Open();
             SQLiteCommand cmd = new SQLiteCommand("DELETE FROM PRODUTOS WHERE CODIGO = @CODIGO", conn);
             cmd.Parameters.AddWithValue("CODIGO", Convert.ToInt32(dataGridView1.CurrentRow.Cells[0].Value));
+            
             try
             {
                 cmd.ExecuteNonQuery();
@@ -137,7 +216,7 @@ namespace Quinta_de_Viana
 
         private void dataGridView2_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-
+            func();
             Produto p = new Produto
             {
                 Código = Convert.ToInt32(dataGridView2.CurrentRow.Cells[0].Value),
@@ -194,7 +273,7 @@ namespace Quinta_de_Viana
                 MessageBox.Show("Preencha todos os campos");
                 return;
             }
-
+            IDregistro = Convert.ToInt32(dataGridView1.CurrentRow.Cells[0].Value);
             if (IDregistro > 0)
             {
                 SQLiteConnection conn = new SQLiteConnection(conexao);
@@ -213,12 +292,32 @@ namespace Quinta_de_Viana
                 }
                 catch (Exception ex) {
                     MessageBox.Show("Error: " + ex.Message);
+                    return;
                 }
-                nomeTextBox.Text = string.Empty;
-                precoTextBox.Text = string.Empty;
-                descricaoTextBox.Text = string.Empty;
-                codTextBox.Text = string.Empty;
                 listar();
+                DateTime saveNow = DateTime.Now;
+                SQLiteCommand cmd2 = new SQLiteCommand("INSERT INTO HISTORICO_PRODUTOS(CODIGO, NOME, PRECO, DESCRICAO, DATA) VALUES (@CODIGO, @NOME, @PRECO, @DESCRICAO, @DATA)", conn);
+                cmd2.Parameters.AddWithValue("@CODIGO", Convert.ToInt32(codTextBox.Text.Trim()));
+                cmd2.Parameters.AddWithValue("@NOME", nomeTextBox.Text.Trim());
+                cmd2.Parameters.AddWithValue("@PRECO", Convert.ToDouble(precoTextBox.Text.Trim()));
+                cmd2.Parameters.AddWithValue("@DESCRICAO", "*Atualização*"+descricaoTextBox.Text.Trim());
+                cmd2.Parameters.AddWithValue("@DATA", saveNow);
+
+                try
+                {
+                    cmd2.ExecuteNonQuery();
+                    //MessageBox.Show("Registro salvo");
+                    nomeTextBox.Text = string.Empty;
+                    precoTextBox.Text = string.Empty;
+                    descricaoTextBox.Text = string.Empty;
+                    codTextBox.Text = string.Empty;
+                    listar();
+                }
+                catch (Exception ex)
+                {
+                    listar();
+                    MessageBox.Show("Erro ao cadastrar: Cheque se o código já existe\n" + ex.Message);
+                }
             }
         }
 
@@ -232,6 +331,135 @@ namespace Quinta_de_Viana
         private void button4_Click(object sender, EventArgs e)
         {
             
+        }
+        private void func() {
+
+            SQLiteConnection conn = new SQLiteConnection(conexao);
+            if (conn.State == ConnectionState.Closed)
+                conn.Open();
+            SQLiteCommand cmd = new SQLiteCommand("SELECT MAX(CODIGO_CONTA) FROM CONTAS", conn);
+
+            try
+            {
+                SQLiteDataReader dr = cmd.ExecuteReader();
+                if (dr.Read())
+                {
+                    try
+                    {
+                        id = dr.GetInt32(0) + 1;
+                        dr.Close();
+                        conn.Close();
+                        //MessageBox.Show(id + "");  //proxima conta
+                    }
+                    catch (Exception ex)
+                    {
+                        id = 0;
+                        //MessageBox.Show(ex.Message + "\n ID = "+id);
+                    }
+                }
+                label3.Text = "Conta: " + id;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return;
+            }
+
+
+        }
+        private void button1_Click_1(object sender, EventArgs e)
+        {
+            func();
+            if (dataGridView3.Rows.Count==0)
+            {
+                MessageBox.Show("Insira itens na conta clicando duas vezes sobre eles no menu à esquerda.");
+                return;
+            }
+            
+
+            DateTime saveNow = DateTime.Now;
+            
+            try
+            {
+                SQLiteConnection conn = new SQLiteConnection(conexao);
+                if (conn.State == ConnectionState.Closed)
+                    conn.Open();
+
+                for (int k = 0; k < dataGridView3.Rows.Count; k++)
+                {
+
+                    SQLiteCommand cmd2 = new SQLiteCommand("INSERT INTO CONTAS(CODIGO_CONTA, CODIGO, NOME, PRECO, DATA) VALUES (@CODIGO_CONTA, @CODIGO, @NOME, @PRECO, @DATA)", conn);
+                    cmd2.Parameters.AddWithValue("@CODIGO_CONTA", Convert.ToInt32(id));
+                    cmd2.Parameters.AddWithValue("@CODIGO", Convert.ToInt32(dataGridView3.Rows[k].Cells[0].Value));
+                    cmd2.Parameters.AddWithValue("@NOME", dataGridView3.Rows[k].Cells[1].Value.ToString());
+                    cmd2.Parameters.AddWithValue("@PRECO", Convert.ToDouble(dataGridView3.Rows[k].Cells[2].Value));
+                    cmd2.Parameters.AddWithValue("@DATA", saveNow.ToString());
+
+                    using (cmd2)
+                    {
+                        cmd2.ExecuteNonQuery();
+                    }
+                }
+                
+                listar();
+                dataGridView3.DataSource = null;
+                dataGridView3.Rows.Clear();
+                atualizaTotal();
+
+                MessageBox.Show("Conta impressa");//colocar gaveta para abrir
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erro ao fechar conta:\n" + ex.Message);
+                return;
+            }
+
+
+            string path = "C:\\Users\\Quinta de Viana\\OneDrive\\Documentos\\";
+            File.Delete(path + "Banco.db");
+            File.Copy("Banco.db", path + "Banco.db");
+
+        }
+
+        private void tabPage2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button4_Click_1(object sender, EventArgs e)
+        {
+            SQLiteConnection conn = new SQLiteConnection(conexao);
+            if (conn.State == ConnectionState.Closed)
+                conn.Open();
+            SQLiteCommand cmd = new SQLiteCommand("UPDATE CONTAS SET NOME = @NOME, DATA = @DATA WHERE CODIGO_CONTA = @CODIGO_CONTA", conn);
+            cmd.Parameters.AddWithValue("@NOME", "Excluido");
+            cmd.Parameters.AddWithValue("@DATA", DateTime.Now.ToString());
+            cmd.Parameters.AddWithValue("@CODIGO_CONTA", Convert.ToInt32(textBox1.Text));
+            try
+            {
+                cmd.ExecuteNonQuery();
+                MessageBox.Show("Registro Anulado");
+                listar();
+                textBox1.Text = "";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
+                return;
+            }
+        }
+
+        private void Form1_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            string path = "C:\\Users\\Quinta de Viana\\OneDrive\\Documentos\\";
+            File.Delete(path + "Banco.db");
+            File.Copy("Banco.db", path + "Banco.db");
+
         }
     }
 }
