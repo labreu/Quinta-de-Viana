@@ -58,12 +58,34 @@
             this.Nome = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Preço = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridView2 = new System.Windows.Forms.DataGridView();
+            this.button7 = new System.Windows.Forms.Button();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.portaTextField = new System.Windows.Forms.TextBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
+            this.modeloImpressoraTextField = new System.Windows.Forms.TextBox();
+            this.textArea = new System.Windows.Forms.TextBox();
+            this.label11 = new System.Windows.Forms.Label();
+            this.button8 = new System.Windows.Forms.Button();
+            this.button9 = new System.Windows.Forms.Button();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.label12 = new System.Windows.Forms.Label();
+            this.label13 = new System.Windows.Forms.Label();
+            this.label14 = new System.Windows.Forms.Label();
+            this.diaTextBox = new System.Windows.Forms.TextBox();
+            this.mesTextBox = new System.Windows.Forms.TextBox();
+            this.anoTextBox = new System.Windows.Forms.TextBox();
+            this.button10 = new System.Windows.Forms.Button();
+            this.button11 = new System.Windows.Forms.Button();
+            this.button12 = new System.Windows.Forms.Button();
             this.Menu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.Tabs.SuspendLayout();
             this.tabPage2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
+            this.tabPage1.SuspendLayout();
+            this.tabPage3.SuspendLayout();
             this.SuspendLayout();
             // 
             // Menu
@@ -87,7 +109,7 @@
             this.Menu.Margin = new System.Windows.Forms.Padding(2);
             this.Menu.Name = "Menu";
             this.Menu.Padding = new System.Windows.Forms.Padding(2);
-            this.Menu.Size = new System.Drawing.Size(1326, 389);
+            this.Menu.Size = new System.Drawing.Size(1326, 686);
             this.Menu.TabIndex = 0;
             this.Menu.Text = "Cadastro";
             // 
@@ -239,16 +261,20 @@
             // 
             this.Tabs.Controls.Add(this.tabPage2);
             this.Tabs.Controls.Add(this.Menu);
+            this.Tabs.Controls.Add(this.tabPage1);
+            this.Tabs.Controls.Add(this.tabPage3);
             this.Tabs.Location = new System.Drawing.Point(9, 10);
             this.Tabs.Margin = new System.Windows.Forms.Padding(2);
             this.Tabs.Name = "Tabs";
             this.Tabs.SelectedIndex = 0;
             this.Tabs.Size = new System.Drawing.Size(1334, 712);
             this.Tabs.TabIndex = 0;
+            this.Tabs.Enter += new System.EventHandler(this.Tabs_Enter);
             // 
             // tabPage2
             // 
             this.tabPage2.BackColor = System.Drawing.Color.White;
+            this.tabPage2.Controls.Add(this.button7);
             this.tabPage2.Controls.Add(this.button4);
             this.tabPage2.Controls.Add(this.label8);
             this.tabPage2.Controls.Add(this.textBox1);
@@ -267,6 +293,7 @@
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Caixa";
             this.tabPage2.Click += new System.EventHandler(this.tabPage2_Click);
+            this.tabPage2.Enter += new System.EventHandler(this.tabPage2_Enter);
             // 
             // button4
             // 
@@ -399,6 +426,204 @@
             this.dataGridView2.TabIndex = 0;
             this.dataGridView2.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView2_CellDoubleClick);
             // 
+            // button7
+            // 
+            this.button7.Location = new System.Drawing.Point(665, 329);
+            this.button7.Name = "button7";
+            this.button7.Size = new System.Drawing.Size(75, 34);
+            this.button7.TabIndex = 12;
+            this.button7.Text = "Abrir Gaveta";
+            this.button7.UseVisualStyleBackColor = true;
+            this.button7.Click += new System.EventHandler(this.button7_Click);
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.tabPage1.Controls.Add(this.button9);
+            this.tabPage1.Controls.Add(this.button8);
+            this.tabPage1.Controls.Add(this.label11);
+            this.tabPage1.Controls.Add(this.textArea);
+            this.tabPage1.Controls.Add(this.modeloImpressoraTextField);
+            this.tabPage1.Controls.Add(this.label10);
+            this.tabPage1.Controls.Add(this.label9);
+            this.tabPage1.Controls.Add(this.portaTextField);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(1326, 686);
+            this.tabPage1.TabIndex = 2;
+            this.tabPage1.Text = "Impressora";
+            this.tabPage1.Enter += new System.EventHandler(this.tabPage1_Enter);
+            // 
+            // portaTextField
+            // 
+            this.portaTextField.Location = new System.Drawing.Point(98, 83);
+            this.portaTextField.Name = "portaTextField";
+            this.portaTextField.Size = new System.Drawing.Size(100, 20);
+            this.portaTextField.TabIndex = 0;
+            this.portaTextField.Text = "COM3";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(47, 86);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(35, 13);
+            this.label9.TabIndex = 1;
+            this.label9.Text = "Porta:";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(47, 58);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(45, 13);
+            this.label10.TabIndex = 2;
+            this.label10.Text = "Modelo:";
+            this.label10.Click += new System.EventHandler(this.label10_Click);
+            // 
+            // modeloImpressoraTextField
+            // 
+            this.modeloImpressoraTextField.Location = new System.Drawing.Point(98, 55);
+            this.modeloImpressoraTextField.Name = "modeloImpressoraTextField";
+            this.modeloImpressoraTextField.Size = new System.Drawing.Size(100, 20);
+            this.modeloImpressoraTextField.TabIndex = 3;
+            this.modeloImpressoraTextField.Text = "7";
+            // 
+            // textArea
+            // 
+            this.textArea.Location = new System.Drawing.Point(98, 111);
+            this.textArea.Multiline = true;
+            this.textArea.Name = "textArea";
+            this.textArea.Size = new System.Drawing.Size(298, 345);
+            this.textArea.TabIndex = 4;
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(47, 114);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(34, 13);
+            this.label11.TabIndex = 5;
+            this.label11.Text = "Texto";
+            // 
+            // button8
+            // 
+            this.button8.Location = new System.Drawing.Point(242, 55);
+            this.button8.Name = "button8";
+            this.button8.Size = new System.Drawing.Size(131, 23);
+            this.button8.TabIndex = 6;
+            this.button8.Text = "Conectar Impressora";
+            this.button8.UseVisualStyleBackColor = true;
+            this.button8.Click += new System.EventHandler(this.button8_Click);
+            // 
+            // button9
+            // 
+            this.button9.Location = new System.Drawing.Point(470, 228);
+            this.button9.Name = "button9";
+            this.button9.Size = new System.Drawing.Size(75, 23);
+            this.button9.TabIndex = 7;
+            this.button9.Text = "Imprimir";
+            this.button9.UseVisualStyleBackColor = true;
+            this.button9.Click += new System.EventHandler(this.button9_Click);
+            // 
+            // tabPage3
+            // 
+            this.tabPage3.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.tabPage3.Controls.Add(this.button12);
+            this.tabPage3.Controls.Add(this.button11);
+            this.tabPage3.Controls.Add(this.button10);
+            this.tabPage3.Controls.Add(this.anoTextBox);
+            this.tabPage3.Controls.Add(this.mesTextBox);
+            this.tabPage3.Controls.Add(this.diaTextBox);
+            this.tabPage3.Controls.Add(this.label14);
+            this.tabPage3.Controls.Add(this.label13);
+            this.tabPage3.Controls.Add(this.label12);
+            this.tabPage3.Location = new System.Drawing.Point(4, 22);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage3.Size = new System.Drawing.Size(1326, 686);
+            this.tabPage3.TabIndex = 3;
+            this.tabPage3.Text = "Relatórios";
+            this.tabPage3.Click += new System.EventHandler(this.tabPage3_Click);
+            this.tabPage3.Enter += new System.EventHandler(this.tabPage3_Enter);
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(48, 68);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(26, 13);
+            this.label12.TabIndex = 0;
+            this.label12.Text = "Dia:";
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(48, 98);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(30, 13);
+            this.label13.TabIndex = 1;
+            this.label13.Text = "Mês:";
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(48, 125);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(29, 13);
+            this.label14.TabIndex = 2;
+            this.label14.Text = "Ano:";
+            // 
+            // diaTextBox
+            // 
+            this.diaTextBox.Location = new System.Drawing.Point(95, 65);
+            this.diaTextBox.Name = "diaTextBox";
+            this.diaTextBox.Size = new System.Drawing.Size(54, 20);
+            this.diaTextBox.TabIndex = 3;
+            // 
+            // mesTextBox
+            // 
+            this.mesTextBox.Location = new System.Drawing.Point(95, 95);
+            this.mesTextBox.Name = "mesTextBox";
+            this.mesTextBox.Size = new System.Drawing.Size(54, 20);
+            this.mesTextBox.TabIndex = 4;
+            // 
+            // anoTextBox
+            // 
+            this.anoTextBox.Location = new System.Drawing.Point(95, 122);
+            this.anoTextBox.Name = "anoTextBox";
+            this.anoTextBox.Size = new System.Drawing.Size(54, 20);
+            this.anoTextBox.TabIndex = 5;
+            // 
+            // button10
+            // 
+            this.button10.Location = new System.Drawing.Point(180, 63);
+            this.button10.Name = "button10";
+            this.button10.Size = new System.Drawing.Size(193, 23);
+            this.button10.TabIndex = 6;
+            this.button10.Text = "Relatório do dia";
+            this.button10.UseVisualStyleBackColor = true;
+            // 
+            // button11
+            // 
+            this.button11.Location = new System.Drawing.Point(180, 93);
+            this.button11.Name = "button11";
+            this.button11.Size = new System.Drawing.Size(193, 23);
+            this.button11.TabIndex = 7;
+            this.button11.Text = "Relatório do mês";
+            this.button11.UseVisualStyleBackColor = true;
+            // 
+            // button12
+            // 
+            this.button12.Location = new System.Drawing.Point(180, 120);
+            this.button12.Name = "button12";
+            this.button12.Size = new System.Drawing.Size(193, 23);
+            this.button12.TabIndex = 8;
+            this.button12.Text = "Relatório do ano";
+            this.button12.UseVisualStyleBackColor = true;
+            this.button12.Click += new System.EventHandler(this.button12_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -409,6 +634,7 @@
             this.Name = "Form1";
             this.Text = "Quinta de Viana";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.Menu.ResumeLayout(false);
@@ -419,6 +645,10 @@
             this.tabPage2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView3)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).EndInit();
+            this.tabPage1.ResumeLayout(false);
+            this.tabPage1.PerformLayout();
+            this.tabPage3.ResumeLayout(false);
+            this.tabPage3.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -455,6 +685,26 @@
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.Button button7;
+        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.TextBox modeloImpressoraTextField;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.TextBox portaTextField;
+        private System.Windows.Forms.Button button9;
+        private System.Windows.Forms.Button button8;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.TextBox textArea;
+        private System.Windows.Forms.TabPage tabPage3;
+        private System.Windows.Forms.TextBox anoTextBox;
+        private System.Windows.Forms.TextBox mesTextBox;
+        private System.Windows.Forms.TextBox diaTextBox;
+        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.Button button12;
+        private System.Windows.Forms.Button button11;
+        private System.Windows.Forms.Button button10;
     }
 }
 

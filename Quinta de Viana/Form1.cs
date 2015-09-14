@@ -18,6 +18,7 @@ namespace Quinta_de_Viana
         private static string nomebanco = "Banco.db";
         private static int IDregistro;
         private int id = 1;
+        int impressoraConectada = 0;
 
         public Form1()
         {
@@ -458,6 +459,113 @@ namespace Quinta_de_Viana
             string path = "C:\\Users\\Quinta de Viana\\OneDrive\\Documentos\\";
             File.Delete(path + "Banco.db");
             File.Copy("Banco.db", path + "Banco.db");
+
+        }
+
+        private void label10_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            try {
+
+                int iRetorno = MP2032.ConfiguraModeloImpressora(Convert.ToInt32(modeloImpressoraTextField.Text.ToString()));
+                iRetorno = MP2032.IniciaPorta(portaTextField.Text);
+                MessageBox.Show("Impressora MP4200 TH conectada.");
+                impressoraConectada = 1;
+                button9.Enabled = true;
+            }
+            catch(Exception ex)
+            {
+                impressoraConectada = 0;
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            MP2032.FechaPorta();
+        }
+
+        private void button9_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                int iRetorno;
+                iRetorno = MP2032.FormataTX(textArea.Text, 1, 0, 0, 1, 0);
+
+                iRetorno = MP2032.AcionaGuilhotina(1);
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            int iRetorno;
+            int charCode = 27;
+            int charCode2 = 118;
+            int charCode3 = 140;
+
+            char specialChar = Convert.ToChar(charCode);
+            char specialChar2 = Convert.ToChar(charCode2);
+            char specialChar3 = Convert.ToChar(charCode3);
+
+            string s_cmdTX = "" + specialChar + specialChar2 + specialChar3;
+
+            try
+            {
+                iRetorno = MP2032.ComandoTX(s_cmdTX, s_cmdTX.Length);
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void tabPage2_Enter(object sender, EventArgs e)
+        {
+            atualizaTotal();
+            if (impressoraConectada == 0)
+                button7.Enabled = false;
+            else
+                button7.Enabled = true;//desabilita e habilita botao de abrir gaveta
+        }
+
+        private void tabPage1_Enter(object sender, EventArgs e)
+        {
+            if (impressoraConectada == 0)
+                button9.Enabled = false;
+            else
+                button9.Enabled = true;
+        }
+
+        private void tabPage3_Enter(object sender, EventArgs e)
+        {
+            DateTime saveNow = DateTime.Now;
+
+            diaTextBox.Text = saveNow.Day.ToString();
+            mesTextBox.Text = saveNow.Month.ToString();
+            anoTextBox.Text = saveNow.Year.ToString();
+
+        }
+
+        private void button12_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void tabPage3_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Tabs_Enter(object sender, EventArgs e)
+        {
 
         }
     }
