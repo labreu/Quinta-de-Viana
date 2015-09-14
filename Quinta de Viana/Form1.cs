@@ -195,6 +195,14 @@ namespace Quinta_de_Viana
             dataGridView2.Columns[1].Width = 150;
             dataGridView3.Columns[1].Width = 200;
 
+            textBoxAjuda.Text = "Qual papel devo utilizar para a impressão?\r\n  Deve ser utilizada uma bobina de papel térmico, com diâmetro externo de até 80 mm (comprar 80mm de preferência para manter o padrão). Para maior vida útil da guilhotina, utilizar papel de 56 g / m².";
+            textBoxAjuda.Text = textBoxAjuda.Text + "\r\n\r\nComo troco a bobina de papel da impressora?\r\n  Puxe para frente a alavanca da tampa e abra a tampa da impressora. Tire o tubete da bobina de papel usada. Insira a nova bobina da maneira ilustrada no manual, ou seja, com o papel saindo embaixo do rolo.Deixe um pouco de papel para fora. Feche a tampa e destaque a sobra de papel contra a serrilha.";
+            textBoxAjuda.Text = textBoxAjuda.Text + "\r\n\r\nO papel atolou, como devo proceder para voltar a operar?\r\n  Em caso de atolamento de papel, abra a tampa da impressora puxando a alavanca.Ao abrir tampa a guilotina destravará e a impressora voltará a operação. Feche a tampa da impressora lembrando de posicionar a bobina de forma correta dentro do receptáculo da impressora. Impressões em andamento serão perdidas devendo ser re - enviadas.";
+            textBoxAjuda.Text = textBoxAjuda.Text + "\r\n\r\nQuando é necessário fazer a limpeza da cabeça de impressão?\r\n  Durante a operação normal, algumas partículas de tinta de papel ficarão aderidas à superfície da cabeça térmica de impressão. Portanto, recomenda - se limpar a cabeça depois de 10 Km de comprimento de papel impresso ou se a qualidade de impressão estiver degradada.";
+            textBoxAjuda.Text = textBoxAjuda.Text + "\r\n\r\nComo limpar a cabeça de impressão?\r\n  Desligue a impressora, e, caso ela estivesse em operação, aguarde alguns minutos até que ela esfrie.Limpe a cabeça de impressão com um pedaço de algodão ou cotonete embebido em álcool isopropílico (etanol ou isopropanol). Não limpe o cabeçote de impressão com objetos duros, abrasivos ou com os dedos uma vez que isso pode causar danos à superfície delicada.Limpe o rolete do cilindro(rolete de borracha) com o algodão para remover partículas de pó.Quando a limpeza estiver concluída, aguarde algum tempo para voltar a operar, de modo que qualquer eventual excesso de álcool possa evaporar.";
+            textBoxAjuda.Text = textBoxAjuda.Text + "\r\n\r\n\r\nFonte: http://www.bematech.com.br/suporte/equipamento/mp-4200-th";
+
+
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -472,10 +480,28 @@ namespace Quinta_de_Viana
             try {
 
                 int iRetorno = MP2032.ConfiguraModeloImpressora(Convert.ToInt32(modeloImpressoraTextField.Text.ToString()));
+                if (iRetorno == 0)
+                {
+                    impressoraConectada = iRetorno;
+                }
+                else
+                {
+                    impressoraConectada = iRetorno;
+                }
                 iRetorno = MP2032.IniciaPorta(portaTextField.Text);
-                MessageBox.Show("Impressora MP4200 TH conectada.");
-                impressoraConectada = 1;
-                button9.Enabled = true;
+                if (iRetorno == 0)
+                {
+                    MessageBox.Show("Impressora MP4200 TH nao conectada.");
+                    impressoraConectada = iRetorno;
+                }
+                else
+                {
+                    MessageBox.Show("Impressora MP4200 TH conectada.");
+                    impressoraConectada = iRetorno;
+                    button9.Enabled = true;
+                }
+                
+                
             }
             catch(Exception ex)
             {
@@ -494,7 +520,7 @@ namespace Quinta_de_Viana
             try
             {
                 int iRetorno;
-                iRetorno = MP2032.FormataTX(textArea.Text, 1, 0, 0, 1, 0);
+                iRetorno = MP2032.FormataTX(textArea.Text, 3, 0, 0, 1, 0);
 
                 iRetorno = MP2032.AcionaGuilhotina(1);
             }
