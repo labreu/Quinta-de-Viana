@@ -8,7 +8,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;   
-using System.Windows.Forms;    
+using System.Windows.Forms;
+using System.Windows.Input;
 
 namespace Quinta_de_Viana
 {
@@ -19,6 +20,7 @@ namespace Quinta_de_Viana
         private static int IDregistro;
         private int id = 1;
         int impressoraConectada = 0;
+        string total;
 
         public Form1()
         {
@@ -114,6 +116,40 @@ namespace Quinta_de_Viana
             File.Delete(path + "Banco.db");
             File.Copy("Banco.db", path + "Banco.db");
             listar();
+
+
+            //inicia impressora
+            try
+            {
+                int iRetorno = MP2032.ConfiguraModeloImpressora(Convert.ToInt32(modeloImpressoraTextField.Text.ToString()));
+                if (iRetorno == 0)
+                {
+                    impressoraConectada = iRetorno;
+                }
+                else
+                {
+                    impressoraConectada = iRetorno;
+                }
+                iRetorno = MP2032.IniciaPorta(portaTextField.Text);
+                if (iRetorno == 0)
+                {
+                    MessageBox.Show("Impressora MP4200 TH nao conectada.");
+                    impressoraConectada = iRetorno;
+                }
+                else
+                {
+                    MessageBox.Show("Impressora MP4200 TH conectada.");
+                    impressoraConectada = iRetorno;
+                    button9.Enabled = true;
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                impressoraConectada = 0;
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -249,8 +285,8 @@ namespace Quinta_de_Viana
                 sum = sum + Convert.ToDouble(dataGridView3.Rows[i].Cells[2].Value);
             }
             //MessageBox.Show(sum.ToString());
-            string yourValue = (((double)sum / 100)*100).ToString("C");
-            labelTotal.Text = "Total: " + yourValue;
+            total = (((double)sum / 100)*100).ToString("C");
+            labelTotal.Text = "Total: " + total;
         }
 
         private void dataGridView1_DoubleClick(object sender, EventArgs e)
@@ -386,7 +422,7 @@ namespace Quinta_de_Viana
             
 
             DateTime saveNow = DateTime.Now;
-            
+            string cupom = "";
             try
             {
                 SQLiteConnection conn = new SQLiteConnection(conexao);
@@ -402,19 +438,45 @@ namespace Quinta_de_Viana
                     cmd2.Parameters.AddWithValue("@NOME", dataGridView3.Rows[k].Cells[1].Value.ToString());
                     cmd2.Parameters.AddWithValue("@PRECO", Convert.ToDouble(dataGridView3.Rows[k].Cells[2].Value));
                     cmd2.Parameters.AddWithValue("@DATA", saveNow.ToString());
+                    //cupom = cupom + "\r\n" + Convert.ToInt32(dataGridView3.Rows[k].Cells[0].Value).ToString();
+                    cupom = cupom + "" + dataGridView3.Rows[k].Cells[1].Value.ToString();
 
+                    int row = dataGridView3.Rows[k].Cells[1].Value.ToString().Length+1;
+
+                    string yourValue = (((double)Convert.ToDouble(dataGridView3.Rows[k].Cells[2].Value) / 100) * 100).ToString("C");
+                    row = row + yourValue.Length;
+                    row = 33 - row;
+                    string spaces="";
+                    for(int n = 0; n < row; n++)
+                    {
+                        spaces = spaces + " ";
+                    }
+                    cupom = cupom +spaces+ yourValue+"\r\n";
+                    
                     using (cmd2)
                     {
                         cmd2.ExecuteNonQuery();
                     }
                 }
-                
+                atualizaTotal();
+                cupom = cupom + "---------------------------------\r\nTOTAL: " + total;
                 listar();
                 dataGridView3.DataSource = null;
                 dataGridView3.Rows.Clear();
                 atualizaTotal();
+                try
+                {
+                    int iRetorno;
+                    iRetorno = MP2032.FormataTX(Cabecalho() + cupom + finalConta(), 1, 0, 0, 1, 0);
 
-                MessageBox.Show("Conta impressa");//colocar gaveta para abrir
+                    iRetorno = MP2032.AcionaGuilhotina(1);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                    MessageBox.Show("Conta impressa");
+                }
+                
             }
             catch (Exception ex)
             {
@@ -422,10 +484,11 @@ namespace Quinta_de_Viana
                 return;
             }
 
-
             string path = "C:\\Users\\Quinta de Viana\\OneDrive\\Documentos\\";
             File.Delete(path + "Banco.db");
             File.Copy("Banco.db", path + "Banco.db");
+
+            
 
         }
 
@@ -520,7 +583,7 @@ namespace Quinta_de_Viana
             try
             {
                 int iRetorno;
-                iRetorno = MP2032.FormataTX(textArea.Text, 3, 0, 0, 1, 0);
+                iRetorno = MP2032.FormataTX(Cabecalho()+textArea.Text + finalConta(), 1, 0, 0, 1, 0);
 
                 iRetorno = MP2032.AcionaGuilhotina(1);
             }
@@ -593,6 +656,60 @@ namespace Quinta_de_Viana
         private void Tabs_Enter(object sender, EventArgs e)
         {
 
+        }
+
+        private void Form1_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            
+        }
+
+        private void Tabs_KeyPress(object sender, KeyPressEventArgs e)
+        {
+          
+        }
+
+        private string Cabecalho() {
+
+            DateTime saveNow = DateTime.Now;
+            func();
+            string c = "   RESTAURANTE QUINTA DE VIANA\r\n  RUA ASPAZIA VAREJÃO DIAS, 224\r\n       CENTRO - VIANA - ES\r\nCNPJ:21.600.905/0001-43\r\nIE:083.07828-2\r\n---------------------------------\r\n"+saveNow+ "\r\nCódigo da Conta: " + id + "\r\n              CUPOM\r\n";
+
+            return c;
+        }
+
+        private string finalConta()
+        {
+
+            string c = "\r\n---------------------------------\r\n    OBRIGADO PELA PREFERÊNCIA\r\n    www.quintadeviana.com.br\r\n (27)3255-1153 / (27)9 9996-2015\r\n";
+
+            return c;
+        }
+
+        private void Tabs_KeyDown(object sender, KeyEventArgs e)
+        {
+            if( e.KeyCode == Keys.F1)
+            {
+                int iRetorno;
+                int charCode = 27;
+                int charCode2 = 118;
+                int charCode3 = 140;
+
+                char specialChar = Convert.ToChar(charCode);
+                char specialChar2 = Convert.ToChar(charCode2);
+                char specialChar3 = Convert.ToChar(charCode3);
+
+                string s_cmdTX = "" + specialChar + specialChar2 + specialChar3;
+
+                try
+                {
+                    iRetorno = MP2032.ComandoTX(s_cmdTX, s_cmdTX.Length);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+
+            }
         }
     }
 }

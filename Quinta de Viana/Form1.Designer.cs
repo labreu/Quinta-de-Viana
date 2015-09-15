@@ -276,6 +276,8 @@
             this.Tabs.Size = new System.Drawing.Size(1334, 712);
             this.Tabs.TabIndex = 0;
             this.Tabs.Enter += new System.EventHandler(this.Tabs_Enter);
+            this.Tabs.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Tabs_KeyDown);
+            this.Tabs.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Tabs_KeyPress);
             // 
             // tabPage2
             // 
@@ -688,6 +690,7 @@
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
             this.Load += new System.EventHandler(this.Form1_Load);
+            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Form1_KeyPress);
             this.Menu.ResumeLayout(false);
             this.Menu.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
