@@ -190,6 +190,7 @@ namespace Quinta_de_Viana
             comboBox1.Items.Add("Prato executivo");
             comboBox1.Items.Add("Sobremesa");
             comboBox1.Items.Add("Produto caseiro");
+            comboBox1.Items.Add("Café da manhã");
         }
 
         private void button1_Click(object sender, EventArgs e)
