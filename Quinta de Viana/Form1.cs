@@ -90,6 +90,36 @@ namespace Quinta_de_Viana
                     MessageBox.Show("Erro ao criar banco: " + ex.Message);
                     return;
                 }
+
+                StringBuilder sql4 = new StringBuilder();
+                sql4.AppendLine("CREATE TABLE IF NOT EXISTS CATEGORIAS ([CODIGO] INTEGER PRIMARY KEY,[NOME] VARCHAR(50),[PRECO] REAL,[CATEGORIA] VARCHAR(255))");
+
+                SQLiteCommand cmd4 = new SQLiteCommand(sql4.ToString(), conn);
+                try
+                {
+                    cmd4.ExecuteNonQuery();
+
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Erro ao criar banco: " + ex.Message);
+                    return;
+                }
+
+                StringBuilder sql5 = new StringBuilder();
+                sql5.AppendLine("CREATE TABLE IF NOT EXISTS H_GAVETA([ID] INTEGER PRIMARY KEY AUTOINCREMENT, [CODIGO_CONTA] INTEGER, [DATA] VARCHAR(255))");
+
+                SQLiteCommand cmd5 = new SQLiteCommand(sql5.ToString(), conn);
+                try
+                {
+                    cmd5.ExecuteNonQuery();
+
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Erro ao criar banco: " + ex.Message);
+                    return;
+                }
             }
             
             System.Windows.Forms.ToolTip ToolTip1 = new System.Windows.Forms.ToolTip();
@@ -150,17 +180,39 @@ namespace Quinta_de_Viana
                 impressoraConectada = 0;
                 MessageBox.Show(ex.Message);
             }
+
+            comboBox1.Items.Add("Bebida");
+            comboBox1.Items.Add("Petisco");
+            comboBox1.Items.Add("À la carte");
+            comboBox1.Items.Add("Prato executivo");
+            comboBox1.Items.Add("Sobremesa");
+            comboBox1.Items.Add("Produto caseiro");
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
             
             if (nomeTextBox.Text == "" || precoTextBox.Text == ""
-                || codTextBox.Text == "")
+                || codTextBox.Text == "" || comboBox1.Text == "")
             {
-                MessageBox.Show("Preencha todos os campos");
+                MessageBox.Show("Preencha todos os campos. Apenas a descrição é opcional.");
                 return;
             }
+
+            if(precoTextBox.Text.ToString().Contains("."))
+            { 
+                MessageBox.Show("Utilize vírgula para colocar o preço.");
+                return;
+            }
+
+            try {
+                Convert.ToInt32(codTextBox.Text.Trim());
+                Convert.ToDouble(precoTextBox.Text.Trim());
+            }catch(Exception ex) {
+                MessageBox.Show("Utilize apenas números para o código e preço. Utilize a vírgula para colocar preços como por exemplo: 3,50.");
+                return;
+            }
+
 
             SQLiteConnection conn = new SQLiteConnection(conexao);
             if (conn.State == ConnectionState.Closed)
@@ -193,6 +245,23 @@ namespace Quinta_de_Viana
             try
             {
                 cmd2.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                listar();
+                MessageBox.Show("Erro ao cadastrar: Cheque se o código já existe\n" + ex.Message);
+            }
+
+            SQLiteCommand cmd3 = new SQLiteCommand("INSERT INTO CATEGORIAS(CODIGO, NOME, PRECO, CATEGORIA) VALUES (@CODIGO, @NOME, @PRECO, @CATEGORIA)", conn);
+            cmd3.Parameters.AddWithValue("@CODIGO", Convert.ToInt32(codTextBox.Text.Trim()));
+            cmd3.Parameters.AddWithValue("@NOME", nomeTextBox.Text.Trim());
+            cmd3.Parameters.AddWithValue("@PRECO", Convert.ToDouble(precoTextBox.Text.Trim()));
+            cmd3.Parameters.AddWithValue("@CATEGORIA", "*Cadastro*" + comboBox1.Text.Trim());
+            
+
+            try
+            {
+                cmd3.ExecuteNonQuery();
                 MessageBox.Show("Registro salvo");
                 nomeTextBox.Text = string.Empty;
                 precoTextBox.Text = string.Empty;
@@ -275,7 +344,7 @@ namespace Quinta_de_Viana
 
         }
 
-        private void atualizaTotal()
+        private double atualizaTotal()
         {
 
             double sum = 0;
@@ -287,6 +356,8 @@ namespace Quinta_de_Viana
             //MessageBox.Show(sum.ToString());
             total = (((double)sum / 100)*100).ToString("C");
             labelTotal.Text = "Total: " + total;
+
+            return sum;
         }
 
         private void dataGridView1_DoubleClick(object sender, EventArgs e)
@@ -297,6 +368,7 @@ namespace Quinta_de_Viana
             codTextBox.Text = IDregistro.ToString();
             descricaoTextBox.Text = dataGridView1.CurrentRow.Cells[3].Value.ToString();
             precoTextBox.Text = Convert.ToDouble(dataGridView1.CurrentRow.Cells[2].Value).ToString();
+            MessageBox.Show("Lembre-se de preencher novamente a categoria");
         }
 
         private void button6_Click(object sender, EventArgs e)
@@ -312,9 +384,24 @@ namespace Quinta_de_Viana
         private void button3_Click(object sender, EventArgs e)
         {
             if (nomeTextBox.Text == "" || precoTextBox.Text == ""
-                || codTextBox.Text == "")
+                || codTextBox.Text == "" || comboBox1.Text == "")
             {
                 MessageBox.Show("Preencha todos os campos");
+                return;
+            }
+            if (precoTextBox.Text.ToString().Contains("."))
+            {
+                MessageBox.Show("Utilize vírgula para colocar o preço.");
+                return;
+            }
+            try
+            {
+                Convert.ToInt32(codTextBox.Text.Trim());
+                Convert.ToDouble(precoTextBox.Text.Trim());
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Utilize apenas números para o código e preço. Utilize a vírgula para colocar preços como por exemplo: 3,50.");
                 return;
             }
             IDregistro = Convert.ToInt32(dataGridView1.CurrentRow.Cells[0].Value);
@@ -350,6 +437,25 @@ namespace Quinta_de_Viana
                 try
                 {
                     cmd2.ExecuteNonQuery();
+                    //MessageBox.Show("Registro salvo");
+                   
+                }
+                catch (Exception ex)
+                {
+                    listar();
+                    MessageBox.Show("Erro ao cadastrar: Cheque se o código já existe\n" + ex.Message);
+                }
+
+                SQLiteCommand cmd3 = new SQLiteCommand("INSERT INTO HISTORICO_PRODUTOS(CODIGO, NOME, PRECO, CATEGORIA) VALUES (@CODIGO, @NOME, @PRECO, @CATEGORIA)", conn);
+                cmd3.Parameters.AddWithValue("@CODIGO", Convert.ToInt32(codTextBox.Text.Trim()));
+                cmd3.Parameters.AddWithValue("@NOME", nomeTextBox.Text.Trim());
+                cmd3.Parameters.AddWithValue("@PRECO", Convert.ToDouble(precoTextBox.Text.Trim()));
+                cmd3.Parameters.AddWithValue("@CATEGORIA", "*Atualização*" + comboBox1.Text.Trim());
+                
+
+                try
+                {
+                    cmd3.ExecuteNonQuery();
                     //MessageBox.Show("Registro salvo");
                     nomeTextBox.Text = string.Empty;
                     precoTextBox.Text = string.Empty;
@@ -467,7 +573,7 @@ namespace Quinta_de_Viana
                 try
                 {
                     int iRetorno;
-                    iRetorno = MP2032.FormataTX(Cabecalho() + cupom + finalConta(), 1, 0, 0, 1, 0);
+                    iRetorno = MP2032.FormataTX(Cabecalho(0) + cupom + finalConta(), 1, 0, 0, 1, 0);
 
                     iRetorno = MP2032.AcionaGuilhotina(1);
                 }
@@ -583,7 +689,7 @@ namespace Quinta_de_Viana
             try
             {
                 int iRetorno;
-                iRetorno = MP2032.FormataTX(Cabecalho()+textArea.Text + finalConta(), 1, 0, 0, 1, 0);
+                iRetorno = MP2032.FormataTX(Cabecalho(1)+textArea.Text + finalConta(), 1, 0, 0, 1, 0);
 
                 iRetorno = MP2032.AcionaGuilhotina(1);
             }
@@ -595,6 +701,7 @@ namespace Quinta_de_Viana
 
         private void button7_Click(object sender, EventArgs e)
         {
+            func();
             int iRetorno;
             int charCode = 27;
             int charCode2 = 118;
@@ -605,7 +712,7 @@ namespace Quinta_de_Viana
             char specialChar3 = Convert.ToChar(charCode3);
 
             string s_cmdTX = "" + specialChar + specialChar2 + specialChar3;
-
+            DateTime saveNow = DateTime.Now;
             try
             {
                 iRetorno = MP2032.ComandoTX(s_cmdTX, s_cmdTX.Length);
@@ -614,6 +721,24 @@ namespace Quinta_de_Viana
             {
                 MessageBox.Show(ex.Message);
             }
+
+            SQLiteConnection conn = new SQLiteConnection(conexao);
+            if (conn.State == ConnectionState.Closed)
+                conn.Open();
+            SQLiteCommand cmd = new SQLiteCommand("INSERT INTO H_GAVETA(CODIGO_CONTA, DATA) VALUES (@CODIGO_CONTA, @DATA)", conn);
+            cmd.Parameters.AddWithValue("@CODIGO_CONTA", id);
+            cmd.Parameters.AddWithValue("@DATA", saveNow.ToString());
+            try
+            {
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+
+                MessageBox.Show("Erro ao cadastrar: Verifique se o código já existe\n" + ex.Message);
+                return;
+            }
+            
         }
 
         private void tabPage2_Enter(object sender, EventArgs e)
@@ -637,9 +762,9 @@ namespace Quinta_de_Viana
         {
             DateTime saveNow = DateTime.Now;
 
-            diaTextBox.Text = saveNow.Day.ToString();
-            mesTextBox.Text = saveNow.Month.ToString();
-            anoTextBox.Text = saveNow.Year.ToString();
+            //diaTextBox.Text = saveNow.Day.ToString();
+            //mesTextBox.Text = saveNow.Month.ToString();
+            //anoTextBox.Text = saveNow.Year.ToString();
 
         }
 
@@ -668,19 +793,22 @@ namespace Quinta_de_Viana
           
         }
 
-        private string Cabecalho() {
+        private string Cabecalho(int k) {
 
             DateTime saveNow = DateTime.Now;
             func();
-            string c = "   RESTAURANTE QUINTA DE VIANA\r\n  RUA ASPAZIA VAREJÃO DIAS, 224\r\n       CENTRO - VIANA - ES\r\nCNPJ:21.600.905/0001-43\r\nIE:083.07828-2\r\n---------------------------------\r\n"+saveNow+ "\r\nCódigo da Conta: " + id + "\r\n              CUPOM\r\n";
-
+            string c="";
+            if(k==0)
+                c = "   RESTAURANTE QUINTA DE VIANA\r\n  RUA ASPAZIA VAREJÃO DIAS, 224\r\n       CENTRO - VIANA - ES\r\nCNPJ:21.600.905/0001-43\r\nIE:083.07828-2\r\n---------------------------------\r\n"+saveNow+ "\r\nCódigo da Conta: " + (id-1) + "\r\n              CUPOM\r\n";
+            if(k==1)
+                c = "   RESTAURANTE QUINTA DE VIANA\r\n  RUA ASPAZIA VAREJÃO DIAS, 224\r\n       CENTRO - VIANA - ES\r\nCNPJ:21.600.905/0001-43\r\nIE:083.07828-2\r\n---------------------------------\r\n" + saveNow + "\r\n";
             return c;
         }
 
         private string finalConta()
         {
 
-            string c = "\r\n---------------------------------\r\n    OBRIGADO PELA PREFERÊNCIA\r\n    www.quintadeviana.com.br\r\n (27)3255-1153 / (27)9 9996-2015\r\n";
+            string c = "\r\n---------------------------------\r\n    OBRIGADO PELA PREFERÊNCIA\r\n    www.quintadeviana.com.br\r\n          (27)3255-1153\r\n";
 
             return c;
         }
@@ -710,6 +838,40 @@ namespace Quinta_de_Viana
                 }
 
             }
+        }
+
+        private void textBox2_KeyPress(object sender, KeyPressEventArgs e)
+        {
+                    }
+
+        private void textBox2_TextChanged(object sender, EventArgs e)
+        {
+
+            if (textBox2.Text.ToString().Contains("."))
+            {
+                textBox3.Text = "Utilize vírgula para colocar o preço.";
+                return;
+            }
+
+            if (textBox2.Text.ToString() == "")
+            {
+                textBox3.Text = "";
+                return;
+
+            }
+
+            try
+            {
+                double troco = Convert.ToDouble(textBox2.Text.ToString());
+                double total = atualizaTotal();
+
+                textBox3.Text = "" + (troco - total);
+            }
+            catch
+            {
+                return;
+            }
+
         }
     }
 }
