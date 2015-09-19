@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SqlClient;
 using System.Data.SQLite;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;   
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Input;
 
@@ -21,10 +22,12 @@ namespace Quinta_de_Viana
         private int id = 1;
         int impressoraConectada = 0;
         string total;
+        
 
         public Form1()
         {
             InitializeComponent();
+            
         }
 
         private void label1_Click(object sender, EventArgs e)
@@ -129,7 +132,7 @@ namespace Quinta_de_Viana
             ToolTip2.SetToolTip(this.button3, "Não é possível alterar um código. Utilize o Cadastro.");
 
             System.Windows.Forms.ToolTip ToolTip3 = new System.Windows.Forms.ToolTip();
-            ToolTip3.SetToolTip(this.button6, "Limpa os campos acima.");
+            ToolTip3.SetToolTip(this.button6, "Limpa os campos ao lado.");
 
             System.Windows.Forms.ToolTip ToolTip4 = new System.Windows.Forms.ToolTip();
             ToolTip4.SetToolTip(this.button5, "Limpa a conta ao lado.");
@@ -230,7 +233,7 @@ namespace Quinta_de_Viana
             catch (Exception ex)
             {
                 
-                MessageBox.Show("Erro ao cadastrar: Verifique se o código já existe\n"+ex.Message);
+                MessageBox.Show("Erro ao cadastrar: Verifique se o código já existe. Se já existir, utilize o botão alterar\n"+ex.Message);
                 return;
             }
             DateTime saveNow = DateTime.Now;
@@ -445,8 +448,8 @@ namespace Quinta_de_Viana
                     listar();
                     MessageBox.Show("Erro ao cadastrar: Cheque se o código já existe\n" + ex.Message);
                 }
-
-                SQLiteCommand cmd3 = new SQLiteCommand("INSERT INTO HISTORICO_PRODUTOS(CODIGO, NOME, PRECO, CATEGORIA) VALUES (@CODIGO, @NOME, @PRECO, @CATEGORIA)", conn);
+                                                        
+                SQLiteCommand cmd3 = new SQLiteCommand("UPDATE CATEGORIAS SET NOME=@NOME, PRECO=@PRECO, CATEGORIA=@CATEGORIA WHERE CODIGO=@CODIGO", conn);
                 cmd3.Parameters.AddWithValue("@CODIGO", Convert.ToInt32(codTextBox.Text.Trim()));
                 cmd3.Parameters.AddWithValue("@NOME", nomeTextBox.Text.Trim());
                 cmd3.Parameters.AddWithValue("@PRECO", Convert.ToDouble(precoTextBox.Text.Trim()));
@@ -735,19 +738,16 @@ namespace Quinta_de_Viana
             catch (Exception ex)
             {
 
-                MessageBox.Show("Erro ao cadastrar: Verifique se o código já existe\n" + ex.Message);
+
                 return;
             }
-            
+
         }
 
         private void tabPage2_Enter(object sender, EventArgs e)
         {
             atualizaTotal();
-            if (impressoraConectada == 0)
-                button7.Enabled = false;
-            else
-                button7.Enabled = true;//desabilita e habilita botao de abrir gaveta
+            
         }
 
         private void tabPage1_Enter(object sender, EventArgs e)
@@ -836,7 +836,23 @@ namespace Quinta_de_Viana
                 {
                     MessageBox.Show(ex.Message);
                 }
+                DateTime saveNow = DateTime.Now;
+                SQLiteConnection conn = new SQLiteConnection(conexao);
+                if (conn.State == ConnectionState.Closed)
+                    conn.Open();
+                SQLiteCommand cmd = new SQLiteCommand("INSERT INTO H_GAVETA(CODIGO_CONTA, DATA) VALUES (@CODIGO_CONTA, @DATA)", conn);
+                cmd.Parameters.AddWithValue("@CODIGO_CONTA", id);
+                cmd.Parameters.AddWithValue("@DATA", saveNow.ToString());
+                try
+                {
+                    cmd.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
 
+
+                    return;
+                }
             }
         }
 
@@ -846,30 +862,29 @@ namespace Quinta_de_Viana
 
         private void textBox2_TextChanged(object sender, EventArgs e)
         {
+        }
 
-            if (textBox2.Text.ToString().Contains("."))
+        private void precoTextBox_TextChanged(object sender, EventArgs e)
+        {
+            if (precoTextBox.Text.ToString().Contains("."))
+                precoTextBox.Text = "Utilize vírgula.";
+        }
+
+        private void textBox2_TextChanged_1(object sender, EventArgs e)
+        {
+
+            foreach (DataGridViewRow row in dataGridView2.Rows)
             {
-                textBox3.Text = "Utilize vírgula para colocar o preço.";
-                return;
-            }
-
-            if (textBox2.Text.ToString() == "")
-            {
-                textBox3.Text = "";
-                return;
-
-            }
-
-            try
-            {
-                double troco = Convert.ToDouble(textBox2.Text.ToString());
-                double total = atualizaTotal();
-
-                textBox3.Text = "" + (troco - total);
-            }
-            catch
-            {
-                return;
+                string s = row.Cells[0].Value.ToString();
+                if (!s.StartsWith(textBox2.Text, true, null))
+                {
+                    CurrencyManager currencyManager1 = (CurrencyManager)BindingContext[dataGridView2.DataSource];
+                    currencyManager1.SuspendBinding();
+                    row.Visible = false;
+                    currencyManager1.ResumeBinding();
+                }
+                else
+                    row.Visible = true;
             }
 
         }
