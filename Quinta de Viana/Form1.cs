@@ -887,7 +887,150 @@ namespace Quinta_de_Viana
                 else
                     row.Visible = true;
             }
+            
+        }
 
+        private void button7_Click_1(object sender, EventArgs e)
+        {
+            double total = 0;
+            
+            SQLiteConnection conn = new SQLiteConnection(conexao);
+            if (conn.State == ConnectionState.Closed)
+                conn.Open();
+            SQLiteCommand cmd = new SQLiteCommand("SELECT SUM(PRECO) FROM CONTAS WHERE DATA LIKE @DATA", conn);
+            cmd.Parameters.AddWithValue("@DATA", "%" + fechaDataText.Text + "%");
+            try
+            {
+                SQLiteDataReader dr = cmd.ExecuteReader();
+                if (dr.Read())
+                {
+                    try
+                    {
+
+                        total = dr.GetDouble(0);
+                        //MessageBox.Show(id + "");  //proxima conta
+                    }
+                    catch (Exception ex)
+                    {
+
+                        //MessageBox.Show(ex.Message + "\n ID = "+id);
+                    }
+                    dr.Close();
+                    conn.Close();
+                }
+                fechaValorText.Text = "Total do dia: " + total;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return;
+            }
+
+            int qtdade, codConta, cod;
+            string nome, data;
+            double preco;
+
+            SQLiteConnection conn2 = new SQLiteConnection(conexao);
+            if (conn2.State == ConnectionState.Closed)
+                conn2.Open();
+            SQLiteCommand cmd2 = new SQLiteCommand("SELECT * FROM CONTAS WHERE DATA LIKE @DATA", conn2);
+            cmd2.Parameters.AddWithValue("@DATA", "%" + fechaDataText.Text + "%");
+            try
+            {
+                SQLiteDataReader dr = cmd2.ExecuteReader();
+                if (dr.Read())
+                {
+                    try
+                    {
+
+                        preco = dr.GetDouble(6);
+                        MessageBox.Show(preco + "");  //proxima conta
+                    }
+                    catch (Exception ex)
+                    {
+
+                        MessageBox.Show(ex.Message );
+                    }
+                    dr.Close();
+                    conn2.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return;
+            }
+        }
+
+        private void tabPage3_Enter_1(object sender, EventArgs e)
+        {
+            DateTime saveNow = DateTime.Now;
+            fechaDataText.Text = System.DateTime.Today.ToShortDateString();
+        }
+
+        private void label18_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox3_TextChanged(object sender, EventArgs e)
+        {
+            foreach (DataGridViewRow row in dataGridView2.Rows)
+            {
+                string s = row.Cells[1].Value.ToString();
+                if (!s.StartsWith(textBox3.Text, true, null))
+                {
+                    CurrencyManager currencyManager1 = (CurrencyManager)BindingContext[dataGridView2.DataSource];
+                    currencyManager1.SuspendBinding();
+                    row.Visible = false;
+                    currencyManager1.ResumeBinding();
+                }
+                else
+                    row.Visible = true;
+            }
+        }
+
+        private void button10_Click(object sender, EventArgs e)
+        {
+            if (this.dataGridView3.SelectedRows.Count > 0)
+            {
+                dataGridView3.Rows.RemoveAt(this.dataGridView3.SelectedRows[0].Index);
+            }
+            atualizaTotal();
+        }
+
+        private void textBox5_TextChanged(object sender, EventArgs e)
+        {
+            foreach (DataGridViewRow row in dataGridView1.Rows)
+            {
+                string s = row.Cells[0].Value.ToString();
+                if (!s.StartsWith(textBox5.Text, true, null))
+                {
+                    CurrencyManager currencyManager1 = (CurrencyManager)BindingContext[dataGridView1.DataSource];
+                    currencyManager1.SuspendBinding();
+                    row.Visible = false;
+                    currencyManager1.ResumeBinding();
+                }
+                else
+                    row.Visible = true;
+            }
+        }
+
+        private void textBox4_TextChanged(object sender, EventArgs e)
+        {
+            foreach (DataGridViewRow row in dataGridView1.Rows)
+            {
+                string s = row.Cells[1].Value.ToString();
+                if (!s.StartsWith(textBox4.Text, true, null))
+                {
+                    CurrencyManager currencyManager1 = (CurrencyManager)BindingContext[dataGridView1.DataSource];
+                    currencyManager1.SuspendBinding();
+                    row.Visible = false;
+                    currencyManager1.ResumeBinding();
+                }
+                else
+                    row.Visible = true;
+            }
         }
     }
 }
