@@ -518,6 +518,8 @@ namespace Quinta_de_Viana
                 MessageBox.Show(ex.Message);
                 return;
             }
+            textBox2.Text = "";
+            textBox3.Text = "";
 
 
         }
@@ -926,40 +928,66 @@ namespace Quinta_de_Viana
                 return;
             }
 
-            int qtdade, codConta, cod;
-            string nome, data;
-            double preco;
+            
 
             SQLiteConnection conn2 = new SQLiteConnection(conexao);
             if (conn2.State == ConnectionState.Closed)
                 conn2.Open();
             SQLiteCommand cmd2 = new SQLiteCommand("SELECT * FROM CONTAS WHERE DATA LIKE @DATA", conn2);
+            
             cmd2.Parameters.AddWithValue("@DATA", "%" + fechaDataText.Text + "%");
+            List<Relatorio> lista = new List<Relatorio>();
+            string tudo = "";
+            tudo = "Total do dia: " + total+ "\r\n";
             try
             {
                 SQLiteDataReader dr = cmd2.ExecuteReader();
-                if (dr.Read())
+                while (dr.Read())
                 {
+                    int qtdade, cod, cod_conta;
+                    double preco;
+                    string data, nome;
                     try
                     {
+                        lista.Add(new Relatorio
+                        {
+                            cod = Convert.ToInt32(dr["CODIGO"]),
+                            nome = dr["NOME"].ToString()
+                            ,
+                            data = dr["DATA"].ToString()
+                            ,
+                            preco = Convert.ToDouble(dr["PRECO"]),
+                            codConta = Convert.ToInt32(dr["CODIGO_CONTA"]),
+                            qtdade = Convert.ToInt32(dr["ID"])
+                        });
 
-                        preco = dr.GetDouble(6);
-                        MessageBox.Show(preco + "");  //proxima conta
+
                     }
                     catch (Exception ex)
                     {
 
                         MessageBox.Show(ex.Message );
                     }
-                    dr.Close();
-                    conn2.Close();
+                    
                 }
+                dr.Close();
+                conn2.Close();
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
                 return;
             }
+            
+            for (int i = 0; i < lista.Count; i++)
+            {
+                tudo = tudo + lista[i].formata();
+            }
+
+            System.IO.StreamWriter file = new System.IO.StreamWriter("C:\\Users\\Quinta de Viana\\OneDrive\\Documentos\\" + "relatorio" +".txt");
+            file.WriteLine(tudo);
+
+            file.Close();
         }
 
         private void tabPage3_Enter_1(object sender, EventArgs e)
