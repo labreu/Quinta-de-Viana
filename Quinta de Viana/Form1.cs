@@ -899,8 +899,10 @@ namespace Quinta_de_Viana
             SQLiteConnection conn = new SQLiteConnection(conexao);
             if (conn.State == ConnectionState.Closed)
                 conn.Open();
-            SQLiteCommand cmd = new SQLiteCommand("SELECT SUM(PRECO) FROM CONTAS WHERE DATA LIKE @DATA", conn);
+            string k = "Excl";
+            SQLiteCommand cmd = new SQLiteCommand("SELECT SUM(PRECO) FROM CONTAS WHERE DATA LIKE @DATA AND NOME NOT LIKE @K", conn);
             cmd.Parameters.AddWithValue("@DATA", "%" + fechaDataText.Text + "%");
+            cmd.Parameters.AddWithValue("@K", "%" + k + "%");
             try
             {
                 SQLiteDataReader dr = cmd.ExecuteReader();
